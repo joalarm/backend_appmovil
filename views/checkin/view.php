@@ -6,34 +6,34 @@ use yii\widgets\DetailView;
 /* @var $this yii\web\View */
 /* @var $model app\models\Checkin */
 
-$this->title = $model->id;
-$this->params['breadcrumbs'][] = ['label' => 'Checkins', 'url' => ['index']];
+$this->title = 'Checkin del '.$model->Fecha;
+$this->params['breadcrumbs'][] = ['label' => 'Checkins', 'url' => ['index','establecimiento' => $model->Establecimiento]];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="checkin-view">
 
     <h1><?= Html::encode($this->title) ?></h1>
-
-    <p>
-        <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Delete', ['delete', 'id' => $model->id], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
-                'method' => 'post',
-            ],
-        ]) ?>
-    </p>
+    
 
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
             'id',
-            'Fecha',
-            'Longitud',
-            'Latitud',
-            'Cliente',
-            'Establecimiento',
+            'Fecha',            
+            'cliente.Email',
+        	'cliente.Genero',
+        	[
+        		'label' => 'Edad',
+        		'value' => $model->getEdadCliente(),
+        	],
+            [
+            	'label' => 'Calificacion',
+            	'value' => $model->getPuntajeCalificacion(),
+    		],
+        	[
+        		'label' => 'Observaciones',
+        		'value' => $model->getObservacionesCalificacion(),
+        	],
         ],
     ]) ?>
 

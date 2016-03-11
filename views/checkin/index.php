@@ -9,10 +9,6 @@ use yii\widgets\Pjax;
 /* @var $searchModel app\models\BusquedaCheckin */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$script = "$(document).ready(function() {
-    			setInterval(function(){ $('#refreshButton').click(); }, 3000);});";
-$this->registerJs($script);
-
 $this->title = 'Checkins';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
@@ -22,7 +18,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
     
 	<?php Pjax::begin(); ?>
-	<?= Html::a("Actualizar", ['index'], ['class' => 'hidden', 'id' => 'refreshButton']) ?>
+	<?= Html::a("Actualizar", ['index', 'establecimiento' => Yii::$app->request->getQueryParam('establecimiento')], ['class' => 'btn btn-success', 'id' => 'refreshButton']) ?>
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
@@ -34,11 +30,17 @@ $this->params['breadcrumbs'][] = $this->title;
             'cliente.Email',
         	'cliente.Genero',
         	[        		
-        		'label' => 'Puntaje',
+        		'label' => 'Calificacion',
         		'value' => function($model){
         			$calificacion = Calificacion::find()->where(['Checkin' => $model->id])->one();
-        			if(isset($calificacion->Puntaje))
-        				return $calificacion->Puntaje;
+        			if(!isset($calificacion->Puntaje))
+        				return null;
+        			if($calificacion->Puntaje == 1)
+        				return "Malo";
+        			if($calificacion->Puntaje == 2)
+        				return "Regular";
+        			if($calificacion->Puntaje == 3)
+        				return "Bueno";
         			else return "";
         		}
         	],
@@ -47,8 +49,8 @@ $this->params['breadcrumbs'][] = $this->title;
         		'value' => function($model){
         			$calificacion = Calificacion::find()->where(['Checkin' => $model->id])->one();
         			if(isset($calificacion->Observaciones))
-        				return $calificacion->Observaciones;
-        			else return "";
+        				return substr($calificacion->Observaciones, 0, 20)."...";
+        			else return null;
         		}
         	],
 

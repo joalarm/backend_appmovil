@@ -2,6 +2,8 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use yii\helpers\ArrayHelper;
+use app\models\Ciudad;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Establecimiento */
@@ -10,7 +12,7 @@ use yii\widgets\ActiveForm;
 
 <div class="establecimiento-form">
 
-    <?php $form = ActiveForm::begin(); ?>
+    <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
 
     <?= $form->field($model, 'Nombre')->textInput(['maxlength' => true]) ?>
 
@@ -20,11 +22,11 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'Email')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'Ciudad')->textInput() ?>
+    <?= $form->field($model, 'Ciudad')->dropDownList(ArrayHelper::map(Ciudad::find()->all(),'id', 'Nombre'), ['prompt'=>'']) ?>
 
-    <?= $form->field($model, 'Icono')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'Galeria')->textInput() ?>
+    <?= $form->field($model, 'Icono')->fileInput() ?>
+    
+    <?= Html::hiddenInput('hiddenIcono', $model->getOldAttribute('Icono'))?>    
 
     <?= $form->field($model, 'Latitud')->textInput(['maxlength' => true]) ?>
 
@@ -34,6 +36,7 @@ use yii\widgets\ActiveForm;
         <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
     </div>
 
-    <?php ActiveForm::end(); ?>
+    <?php ActiveForm::end(); 
+    var_dump($model);?>
 
 </div>

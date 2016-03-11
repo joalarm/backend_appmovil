@@ -8,6 +8,7 @@ use app\models\BusquedaEstablecimiento;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\UploadedFile;
 
 /**
  * EstablecimientoController implements the CRUD actions for Establecimiento model.
@@ -65,9 +66,17 @@ class EstablecimientoController extends Controller
     public function actionCreate()
     {
         $model = new Establecimiento();
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+		$model->scenario = 'create';
+        
+        if ($model->load(Yii::$app->request->post())) {
+        	$model->Icono = UploadedFile::getInstance($model, 'Icono');
+        	if($model->save() && $model->upload()){
+            	return $this->redirect(['view', 'id' => $model->id]);
+        	} else {        		
+        		return $this->render('create', [
+                'model' => $model,
+            ]);
+        	}
         } else {
             return $this->render('create', [
                 'model' => $model,
@@ -83,10 +92,24 @@ class EstablecimientoController extends Controller
      */
     public function actionUpdate($id)
     {
-        $model = $this->findModel($id);
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+    	$model = $this->findModel($id);
+    	$model->scenario = 'update';
+        $model->Icono = UploadedFile::getInstance($model, 'Icono');
+        if ($model->load(Yii::$app->request->post())) {
+        	$model->Icono = UploadedFile::getInstance($model, 'Icono');
+        	if($model->Icono == null){
+        		$model->Icono = Yii::$app->request->post('hiddenIcono');
+        		if($model->save())
+        			return $this->redirect(['view', 'id' => $model->id]);
+        	}
+        	if($model->save() && $model->upload()){
+        		return $this->redirect(['view', 'id' => $model->id]);
+        	} else {
+        		return $this->render('update', [
+        				'model' => $model,
+        		]);
+        	}
+            
         } else {
             return $this->render('update', [
                 'model' => $model,

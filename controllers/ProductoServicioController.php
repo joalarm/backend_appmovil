@@ -57,6 +57,13 @@ class ProductoServicioController extends Controller
             'model' => $this->findModel($id),
         ]);
     }
+    
+    public function actionViewServicio($id)
+    {
+    	return $this->render('viewServicio', [
+    			'model' => $this->findModel($id),
+    	]);
+    }
 
     /**
      * Creates a new ProductoServicio model.
@@ -71,6 +78,7 @@ class ProductoServicioController extends Controller
         $categoria = new Categoria();
 
         if ($model->load(Yii::$app->request->post())) {
+        	$model->Es_producto = 1;
         	$model->Imagen = UploadedFile::getInstance($model, 'Imagen');
         	$id = Yii::$app->request->post('establecimiento');
         	$prodserv->Est_id = $id;
@@ -97,6 +105,24 @@ class ProductoServicioController extends Controller
             ]);
         }
     }
+    
+    public function actionCreateServicio(){
+    	$model = new ProductoServicio();
+    	if ($model->load(Yii::$app->request->post())) {
+    		$model->Imagen = UploadedFile::getInstance($model, 'Imagen');
+    		if($model->save() && $model->upload()){
+    			return $this->redirect(['view-servicio', 'id' => $model->id]);
+    		} else {
+    			return $this->render('createservicio', [
+    					'model' => $model
+    			]);
+    		}
+    	} else {
+    		return $this->render('createservicio', [
+    				'model' => $model
+    		]);
+    	}
+    }
 
     /**
      * Updates an existing ProductoServicio model.
@@ -111,6 +137,7 @@ class ProductoServicioController extends Controller
         $categoria = new Categoria();
         
         if ($model->load(Yii::$app->request->post())) {
+        	$model->Es_producto = 1;
         	$model->Imagen = UploadedFile::getInstance($model, 'Imagen');
         	if($model->Imagen == null){
         		$model->Imagen = Yii::$app->request->post('hiddenImagen');
@@ -126,7 +153,13 @@ class ProductoServicioController extends Controller
         		$prodserv->Cat_id = Yii::$app->request->post('Categoria')['id'];
         		if($prodserv->save(false))
         			return $this->redirect(['view', 'id' => $model->id]);
-        	} 		
+        	} else {
+        		$categoria->id = $cat_prodserv->Cat_id;
+        		return $this->render('update', [
+        				'model' => $model,
+        				'categoria' => $categoria
+        		]);
+        	}
         	
         } else {
         	$categoria->id = $cat_prodserv->Cat_id;
@@ -135,6 +168,26 @@ class ProductoServicioController extends Controller
             	'categoria' => $categoria
             ]);
         }
+    }
+    
+    public function actionUpdateServicio($id){
+    	$model = $this->findModel($id);
+    	if ($model->load(Yii::$app->request->post())) {
+    		$model->Imagen = UploadedFile::getInstance($model, 'Imagen');
+    		if($model->Imagen == null){
+    			$model->Imagen = Yii::$app->request->post('hiddenImagen');
+    			if($model->save()){
+    				return $this->redirect(['view-servicio', 'id' => $model->id]);
+    			}
+    		}
+    		if($model->save() && $model->upload()){
+    			return $this->redirect(['view-servicio', 'id' => $model->id]);
+    		}
+    	} else {
+    		return $this->render('updateservicio', [
+    				'model' => $model,    				
+    		]);
+    	}
     }
 
     /**
@@ -164,5 +217,19 @@ class ProductoServicioController extends Controller
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+    
+    public function actionAsignServicio(){
+    	$establecimiento = Yii::$app->request->getQueryParam('establecimiento');
+    	$model =  new EstProdserv();
+    	$query = EstProdserv::find()->select('Prodserv_id')->where(['Est_id' => $establecimiento]);
+    	$items = ProductoServicio::find()
+    			->where(['Es_producto' => '0'])
+    			->andWhere(['not',['in', 'id',$query]])
+    			->all();    	
+    	return $this->render('asignservicio', [
+    			'model' => $model,
+    			'items' => $items,
+    	]);
     }
 }

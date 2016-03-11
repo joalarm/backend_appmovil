@@ -79,4 +79,35 @@ class Checkin extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Establecimiento::className(), ['id' => 'Establecimiento']);
     }
+    
+    public function getPuntajeCalificacion(){
+    	$calificacion = Calificacion::find()->where(['checkin' => $this->id])->one();
+    	if(!isset($calificacion->Puntaje))
+    		return null;
+    	if($calificacion->Puntaje == 1)
+    		return 'Malo';
+    	if($calificacion->Puntaje == 2)
+    		return 'Regular';
+    	if($calificacion->Puntaje == 3)
+    		return 'Bueno';
+    }
+    
+    public function getObservacionesCalificacion(){
+    	$calificacion = Calificacion::find()->where(['checkin' => $this->id])->one();
+    	if(isset($calificacion->Observaciones))
+    		return $calificacion->Observaciones;
+    	else return null;
+    }
+    
+    public function getEdadCliente(){
+    	$cliente = Cliente::findOne($this->Cliente);
+    	if(isset($cliente->F_nacimiento)){
+    		$datetime1 = new \DateTime($cliente->F_nacimiento);
+    		$datetime2 = new \DateTime();
+    		$diff = $datetime1->diff($datetime2);
+    		return utf8_encode($diff->y." años");
+    	} else {
+    		return null;
+    	}
+    }
 }

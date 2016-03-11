@@ -17,6 +17,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <p>
         <?= Html::a('Ver Productos-Servicios', ['producto-servicio/', 'establecimiento' => $model->id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Ver Galerias', ['galeria/', 'establecimiento' => $model->id], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Ver Checkins', ['checkin/', 'establecimiento' => $model->id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Delete', ['delete', 'id' => $model->id], [
             'class' => 'btn btn-danger',
@@ -35,9 +36,15 @@ $this->params['breadcrumbs'][] = $this->title;
             'Direccion',
             'Telefono',
             'Email:email',
-            'Ciudad',
-            'Icono',
-            'Galeria',
+            [
+            	'label' => 'Ciudad',
+            	'value' => $model->ciudad->Nombre,
+            ],
+            [
+            	'label' => 'Icono',
+            	'format' => 'html',
+            	'value' => Html::img('@web/img/establecimientos/'.$model->Icono)
+            ],
             'Latitud',
             'Longitud',
         ],

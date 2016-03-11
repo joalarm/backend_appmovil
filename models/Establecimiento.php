@@ -20,8 +20,8 @@ use Yii;
  *
  * @property Admin[] $admins
  * @property Checkin[] $checkins
- * @property CiuEst[] $ciuEsts
  * @property EstProdserv[] $estProdservs
+ * @property Ciudad $ciudad
  * @property Galeria[] $galerias
  */
 class Establecimiento extends \yii\db\ActiveRecord
@@ -40,9 +40,12 @@ class Establecimiento extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['Nombre', 'Direccion', 'Telefono', 'Email', 'Ciudad', 'Icono', 'Latitud', 'Longitud'], 'required'],
+            [['Nombre', 'Direccion', 'Telefono', 'Email', 'Ciudad', 'Icono', 'Latitud', 'Longitud'], 'required', 'on' => 'create'],
+        	[['Nombre', 'Direccion', 'Telefono', 'Email', 'Ciudad', 'Latitud', 'Longitud'], 'required', 'on' => 'update'],
             [['Ciudad', 'Galeria'], 'integer'],
-            [['Nombre', 'Direccion', 'Telefono', 'Email', 'Icono', 'Latitud', 'Longitud'], 'string', 'max' => 45]
+            [['Nombre', 'Direccion', 'Telefono', 'Email', 'Latitud', 'Longitud'], 'string', 'max' => 45],
+        	[['Icono'], 'file', 'skipOnEmpty' => false, 'extensions' => 'png, jpg', 'on' => 'create'],
+        	[['Icono'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg', 'on' => 'update'],
         ];
     }
 
@@ -84,14 +87,6 @@ class Establecimiento extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getCiuEsts()
-    {
-        return $this->hasMany(CiuEst::className(), ['Estab_id' => 'id']);
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
     public function getEstProdservs()
     {
         return $this->hasMany(EstProdserv::className(), ['Est_id' => 'id']);
@@ -100,8 +95,35 @@ class Establecimiento extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
+    public function getCiudad()
+    {
+        return $this->hasOne(Ciudad::className(), ['id' => 'Ciudad']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getGalerias()
     {
         return $this->hasMany(Galeria::className(), ['Establecimiento' => 'id']);
+    }
+    
+    public function scenarios(){
+    	$scenarios = parent::scenarios();
+    	$scenarios['update'] = ['Nombre', 'Direccion', 'Telefono', 'Email', 'Ciudad', 'Icono', 'Latitud', 'Longitud'];
+    	$scenarios['create'] = ['Nombre', 'Direccion', 'Telefono', 'Email', 'Ciudad', 'Icono', 'Latitud', 'Longitud'];
+    	return $scenarios;
+    }
+    
+    
+    public function upload()
+    {
+    	if ($this->validate()) {
+    		if(isset($this->Icono) && ($this->Icono != null))
+    			$this->Icono->saveAs('img/establecimientos/' . $this->Icono->baseName . '.' . $this->Icono->extension);
+    			return true;
+    	} else {    		
+    		return false;
+    	}
     }
 }

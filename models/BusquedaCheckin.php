@@ -37,12 +37,15 @@ class BusquedaCheckin extends Checkin
      * Creates data provider instance with search query applied
      *
      * @param array $params
+     * @param int $establecimiento
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
+    public function search($params, $establecimiento)
     {
-        $query = Checkin::find()->joinWith('cliente');
+        $query = Checkin::find()
+        			->joinWith('cliente')
+					->where(['Establecimiento' => $establecimiento]);
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);

@@ -26,9 +26,7 @@ if(!isset($establecimiento))
 
     <?= $form->field($model, 'Imagen')->fileInput() ?>
     
-    <?= Html::hiddenInput('hiddenImagen',$model->Imagen)?>
-
-    <?= $form->field($model, 'Es_producto')->dropDownList([0 => 'Servicio', 1=> 'Producto'])->label("Tipo") ?>
+    <?= Html::hiddenInput('hiddenImagen',$model->Imagen)?>    
     
     <?= $form->field($categoria, 'id')->dropDownList(ArrayHelper::map($categoria->find()->all(), 'id', 'Nombre'), ['prompt'=>''])->label('Categoria') ?>
     

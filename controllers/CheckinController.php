@@ -32,8 +32,10 @@ class CheckinController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new BusquedaCheckin();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        if(Yii::$app->request->getQueryParam('establecimiento') == null)
+        	throw new \yii\web\HttpException('404','No se puede mostrar la pagina');
+    	$searchModel = new BusquedaCheckin();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams,Yii::$app->request->getQueryParam('establecimiento'));
 
         return $this->render('index', [
             'searchModel' => $searchModel,
