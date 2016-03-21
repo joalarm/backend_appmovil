@@ -33,7 +33,10 @@ $this->params['breadcrumbs'][] = $this->title;
             	'attribute' => 'Establecimiento',
             	'value' => function($model){
             			$establecimiento = Establecimiento::findOne($model->Establecimiento);
-            			return $establecimiento->Nombre;
+            			if($establecimiento != null)
+            				return $establecimiento->Nombre;
+            			else
+            				return null;
    				 },
    				 'filter' => ArrayHelper::map(Establecimiento::find()->all(), 'id', 'Nombre')		
     		],

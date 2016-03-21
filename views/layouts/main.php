@@ -10,6 +10,21 @@ use yii\widgets\Breadcrumbs;
 use app\assets\AppAsset;
 
 AppAsset::register($this);
+if(!Yii::$app->user->isGuest && Yii::$app->user->identity->Superadmin == 1)
+	$menu = '<li>'
+            .Html::a("Ciudades",['ciudad/index'])
+            .'</li>'
+            .'<li>'
+            .Html::a("Categorias",['categoria/index'])
+            .'</li>'
+            .'<li>'
+            .Html::a("Agregar Servicio",['producto-servicio/create-servicio'])
+            .'</li>'
+            .'<li>'
+            .Html::a("Administradores",['admin/index'])
+            .'</li>';
+else 
+	$menu = '';
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
@@ -27,7 +42,7 @@ AppAsset::register($this);
 <div class="wrap">
     <?php
     NavBar::begin([
-        'brandLabel' => utf8_encode('APP Movil Rumbero Manizaleño'),
+        'brandLabel' => utf8_encode('APP Movil Rumbero Movil'),
         'brandUrl' => Yii::$app->homeUrl,
         'options' => [
             'class' => 'navbar-inverse navbar-fixed-top',
@@ -40,6 +55,10 @@ AppAsset::register($this);
                 ['label' => 'Iniciar Sesion', 'url' => ['/site/login']]
             ) : (
                 '<li>'
+            	.Html::a("Establecimientos",['establecimiento/index'])
+            	.'</li>'
+            	.$menu
+            	.'<li>'            		
                 . Html::beginForm(['/site/logout'], 'post')
                 . Html::submitButton(
                     'Cerrar Sesion (' . Yii::$app->user->identity->Email . ')',

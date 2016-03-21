@@ -47,7 +47,7 @@ class BusquedaProductoServicio extends ProductoServicio
     						->from('est_prodserv')
     						->where('Est_id=:est',[':est' => $establecimiento]);
     	$query = ProductoServicio::find()
-        ->where(['in','id',$queryEstProdserv]);
+    						->where(['in','producto_servicio.id',$queryEstProdserv]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

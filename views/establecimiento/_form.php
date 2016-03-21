@@ -36,7 +36,6 @@ use app\models\Ciudad;
         <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
     </div>
 
-    <?php ActiveForm::end(); 
-    var_dump($model);?>
+    <?php ActiveForm::end(); ?>
 
 </div>

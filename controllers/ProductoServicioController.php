@@ -220,16 +220,23 @@ class ProductoServicioController extends Controller
     }
     
     public function actionAsignServicio(){
-    	$establecimiento = Yii::$app->request->getQueryParam('establecimiento');
-    	$model =  new EstProdserv();
-    	$query = EstProdserv::find()->select('Prodserv_id')->where(['Est_id' => $establecimiento]);
-    	$items = ProductoServicio::find()
-    			->where(['Es_producto' => '0'])
-    			->andWhere(['not',['in', 'id',$query]])
-    			->all();    	
-    	return $this->render('asignservicio', [
-    			'model' => $model,
-    			'items' => $items,
-    	]);
+    	
+    	$model =  new EstProdserv();    	
+    	if ($model->load(Yii::$app->request->post())){
+    		$model->Est_id = Yii::$app->request->post('establecimiento');
+    		if($model->save())
+    			return $this->redirect(['index', 'establecimiento' => $model->Est_id]);
+    	} else {
+    		$establecimiento = Yii::$app->request->getQueryParam('establecimiento');
+    		$query = EstProdserv::find()->select('Prodserv_id')->where(['Est_id' => $establecimiento]);
+    		$items = ProductoServicio::find()
+    		->where(['Es_producto' => '0'])
+    		->andWhere(['not',['in', 'id',$query]])
+    		->all();
+	    	return $this->render('asignservicio', [
+	    			'model' => $model,
+	    			'items' => $items,
+	    	]);
+    	}
     }
 }

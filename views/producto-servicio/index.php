@@ -5,6 +5,8 @@ use yii\grid\GridView;
 use yii\helpers\ArrayHelper;
 use app\models\Establecimiento;
 use app\models\app\models;
+use app\models\CatProdserv;
+use app\models\Categoria;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\BusquedaProductoServicio */
@@ -50,6 +52,18 @@ $this->params['breadcrumbs'][] = $this->title;
         		},
         		'filter' => ArrayHelper::map([['id'=> '0', 'Nombre' => 'Servicio'],['id'=> '1', 'Nombre' => 'Producto']], 'id', 'Nombre')
         	],
+        	[
+        		'attribute' => 'categoria.Nombre',
+        		'label' => 'Categoria',
+        		'value' => function($model){
+        			$cat_prodserv = CatProdserv::find()->where(['Prodserv_Id' => $model->id])->one();
+        			if($cat_prodserv != null){
+        				$categoria = Categoria::findOne($cat_prodserv->Cat_id);
+        				return $categoria->Nombre;
+        			}
+        			return null;
+        		},
+			],
         	[
             	'attribute' => 'Imagen',
             	'format' => 'html',
