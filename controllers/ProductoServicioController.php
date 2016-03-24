@@ -113,12 +113,12 @@ class ProductoServicioController extends Controller
     		if($model->save() && $model->upload()){
     			return $this->redirect(['view-servicio', 'id' => $model->id]);
     		} else {
-    			return $this->render('createservicio', [
+    			return $this->render('createServicio', [
     					'model' => $model
     			]);
     		}
     	} else {
-    		return $this->render('createservicio', [
+    		return $this->render('createServicio', [
     				'model' => $model
     		]);
     	}
@@ -184,7 +184,7 @@ class ProductoServicioController extends Controller
     			return $this->redirect(['view-servicio', 'id' => $model->id]);
     		}
     	} else {
-    		return $this->render('updateservicio', [
+    		return $this->render('updateServicio', [
     				'model' => $model,    				
     		]);
     	}
@@ -233,7 +233,7 @@ class ProductoServicioController extends Controller
     		->where(['Es_producto' => '0'])
     		->andWhere(['not',['in', 'id',$query]])
     		->all();
-	    	return $this->render('asignservicio', [
+	    	return $this->render('asignServicio', [
 	    			'model' => $model,
 	    			'items' => $items,
 	    	]);
