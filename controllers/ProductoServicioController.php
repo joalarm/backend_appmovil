@@ -239,4 +239,10 @@ class ProductoServicioController extends Controller
 	    	]);
     	}
     }
+    
+    public function actionListServicio()
+    {
+    	$query = ProductoServicio::find()->select(['id', 'Nombre'])->where(['Es_producto' => '0'])->all();
+    	return \yii\helpers\Json::encode($query);
+    }
 }

@@ -145,4 +145,14 @@ class EstablecimientoController extends Controller
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+    
+
+
+    public function actionList()
+    {
+    	$params = Yii::$app->request->queryParams;
+    	$model = Establecimiento::find();
+    	if(isset($params['param1']))return 'listo';
+    }
+    
 }
