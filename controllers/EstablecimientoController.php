@@ -148,11 +148,11 @@ class EstablecimientoController extends Controller
     
 
 
-    public function actionList()
+    public function actionListEstablecimiento()
     {
     	$params = Yii::$app->request->queryParams;
-    	$model = Establecimiento::find();
-    	if(isset($params['param1']))return 'listo';
+    	$model = Establecimiento::find()->select(['id','Nombre','Direccion','Telefono','Icono'])->all();
+    	return \yii\helpers\Json::encode($model);
     }
     
 }
