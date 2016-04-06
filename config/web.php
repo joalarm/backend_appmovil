@@ -54,7 +54,16 @@ $config = [
 			'rules' => [
 					[
 							'allow' => true,
-							'actions' => ['login', 'list-servicio', 'list-establecimiento'],
+							'actions' => ['login', 
+											'list-servicio', 
+											'list-establecimiento', 
+											'search-cliente',
+											'search-cliente-id',
+											'create-cliente',
+											'list-checkins',
+											'list-checkin',
+											'create-checkin',
+											'create-calificacion'],
 					],
 					[
 							'allow' => true,

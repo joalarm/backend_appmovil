@@ -120,4 +120,59 @@ class CheckinController extends Controller
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+    
+    public function actionListCheckins()
+    {
+    	$params = Yii::$app->request->queryParams;
+    	$id = isset($params['id']) ? $params['id'] : null;
+    	if($id != null){
+	    	$query = (new \yii\db\Query())
+	    			->select('checkin.*, establecimiento.Nombre, establecimiento.Direccion, establecimiento.Icono, calificacion.Puntaje, calificacion.Observaciones')
+	    			->from('checkin')
+	    			->leftJoin('establecimiento','checkin.Establecimiento = establecimiento.id')
+	    			->leftJoin('calificacion', 'calificacion.Checkin = checkin.id')
+	    			->where(['Cliente' => $id])
+	    			->all();
+	    	return \yii\helpers\Json::encode($query);
+    	}
+    	return null;
+    }
+    
+    public function actionListCheckin()
+    {
+    	$params = Yii::$app->request->queryParams;
+    	$id = isset($params['id']) ? $params['id'] : null;
+    	if($id != null){
+    		$query = (new \yii\db\Query())
+    		->select(['DATE(checkin.Fecha) as Fecha', 'establecimiento.Nombre'])
+    		->from('checkin')
+    		->leftJoin('establecimiento','checkin.Establecimiento = establecimiento.id')
+    		->where(['checkin.id' => $id])
+    		->one();
+    		return \yii\helpers\Json::encode($query);
+    	}
+    	return null;
+    }
+    
+    public function actionCreateCheckin(){
+    	$params = Yii::$app->request->queryParams;
+    	$cliente = isset($params['cliente']) ? $params['cliente'] : null;
+    	$establecimiento = isset($params['establecimiento']) ? $params['establecimiento'] : null;
+    	$longitud = isset($params['longitud']) ? $params['longitud'] : null;
+    	$latitud = isset($params['latitud']) ? $params['latitud'] : null;
+    	$fecha = date("Y-m-d h:i:sa");
+    	if($cliente != null && $establecimiento != null){
+    		$model = new Checkin();
+    		$model->Cliente = $cliente;
+    		$model->Establecimiento = $establecimiento;
+    		$model->Longitud = $longitud;
+    		$model->Latitud = $latitud;
+    		$model->Fecha = $fecha;
+    		if($model->save())
+    			return $model->id;
+    		else
+    			return -1;
+    	}	
+    	return 0;
+    }
 }

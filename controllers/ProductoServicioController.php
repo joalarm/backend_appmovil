@@ -110,6 +110,7 @@ class ProductoServicioController extends Controller
     	$model = new ProductoServicio();
     	if ($model->load(Yii::$app->request->post())) {
     		$model->Imagen = UploadedFile::getInstance($model, 'Imagen');
+    		$model->Es_producto = 0;
     		if($model->save() && $model->upload()){
     			return $this->redirect(['view-servicio', 'id' => $model->id]);
     		} else {
