@@ -9,6 +9,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\UploadedFile;
+use app\models\ProductoServicio;
 
 /**
  * EstablecimientoController implements the CRUD actions for Establecimiento model.
@@ -151,8 +152,63 @@ class EstablecimientoController extends Controller
     public function actionListEstablecimiento()
     {
     	$params = Yii::$app->request->queryParams;
-    	$model = Establecimiento::find()->select(['id','Nombre','Direccion','Telefono','Icono'])->all();
-    	return \yii\helpers\Json::encode($model);
+    	$model = new \yii\db\Query();
+    	$model->select(['establecimiento.id','establecimiento.Nombre','establecimiento.Direccion','establecimiento.Telefono','establecimiento.Icono'])
+    		->from('establecimiento');
+    	if(isset($params['servicios']) && count($params['servicios']) > 0){
+    		$model->leftJoin('est_prodserv','est_prodserv.Est_id = establecimiento.id');
+    		$model->where(['est_prodserv.Prodserv_id' => $params['servicios'][0]]);
+    		for($i = 1; $i < count($params['servicios']); $i++ ){
+    			$query = new \yii\db\Query();
+    			$query->select(['establecimiento.id'])
+    				->from('establecimiento')
+    				->leftJoin('est_prodserv','est_prodserv.Est_id = establecimiento.id')
+    				->where(['est_prodserv.Prodserv_id' => $params['servicios'][$i]]);
+    			$model->andWhere(['IN','est_prodserv.Est_id', $query]);
+    		}
+    	}
+    	return \yii\helpers\Json::encode($model->all());
+    }
+    
+    public function actionListEstablecimientoId()
+    {
+    	$params = Yii::$app->request->queryParams;
+    	$establecimiento = Establecimiento::findOne($params['id']);
+    	$servicios = (new \yii\db\Query())
+    		->select(['producto_servicio.*'])
+    		->from('producto_servicio')
+    		->leftJoin('est_prodserv','est_prodserv.Prodserv_id = producto_servicio.id')
+    		->where(['est_prodserv.Est_id' => $params['id']])
+    		->andWhere(['producto_servicio.Es_producto' => 0])
+    		->all();
+    	$productos= (new \yii\db\Query())
+    		->select(['producto_servicio.*','categoria.Nombre as Categoria'])
+    		->from('producto_servicio')
+    		->leftJoin('est_prodserv','est_prodserv.Prodserv_id = producto_servicio.id')
+    		->leftJoin('cat_prodserv','cat_prodserv.ProdServ_id = producto_servicio.id')
+    		->leftJoin('categoria', 'cat_prodserv.Cat_id = categoria.id')
+    		->where(['est_prodserv.Est_id' => $params['id']])
+    		->andWhere(['producto_servicio.Es_producto' => 1])
+    		->orderBy('Categoria')
+    		->all();
+    	$galeria = (new \yii\db\Query())
+    		->from('galeria')
+    		->where(['Establecimiento' => $params['id']])
+    		->all();
+    	$galerias = array();
+    	foreach ($galeria as $item){
+    		$imagenes = (new \yii\db\Query())
+    		->from('imagen')
+    		->where(['Galeria' => $item['id']])
+    		->all();
+    		$galerias[$item['Titulo']] = $imagenes;
+    	}
+    	$datos = array();
+    	$datos['info'] = $establecimiento;
+    	$datos['servicios'] = $servicios;
+    	$datos['productos'] = $productos;
+    	$datos['galerias'] = $galerias;
+    	return \yii\helpers\Json::encode($datos);
     }
     
 }
