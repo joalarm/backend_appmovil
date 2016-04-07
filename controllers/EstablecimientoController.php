@@ -198,6 +198,8 @@ class EstablecimientoController extends Controller
     	$galerias = array();
     	foreach ($galeria as $item){
     		$imagenes = (new \yii\db\Query())
+    		->select(["CONCAT('http://appmovil.joalar.com/web/img/galerias/', imagen.Ruta) as src", 
+    					'imagen.Titulo as sub'])
     		->from('imagen')
     		->where(['Galeria' => $item['id']])
     		->all();
